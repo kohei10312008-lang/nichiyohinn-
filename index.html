@@ -46,12 +46,12 @@ h1{margin:0;font-size:15px;font-weight:800;letter-spacing:.28em;text-indent:.28e
 .t-red b{color:var(--red)} .t-amber b{color:var(--amber)} .t-green b{color:var(--green)}
 
 nav{display:flex;margin-top:14px}
-nav button{flex:1;padding:12px 2px 11px;font-size:13.5px;font-weight:800;letter-spacing:.1em;color:var(--dim);border-bottom:3px solid transparent}
+nav button{flex:1;padding:12px 0 11px;font-size:12.5px;font-weight:800;letter-spacing:.04em;color:var(--dim);border-bottom:3px solid transparent;white-space:nowrap}
 nav button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
 nav .badge{
-  display:inline-block;min-width:19px;height:19px;padding:0 5px;margin-left:5px;
+  display:inline-block;min-width:17px;height:17px;padding:0 4px;margin-left:3px;
   background:var(--red);color:#fff;border-radius:2px;font-family:"Archivo",sans-serif;
-  font-size:11.5px;font-weight:800;line-height:19px;letter-spacing:0;vertical-align:1px;
+  font-size:11px;font-weight:800;line-height:17px;letter-spacing:0;vertical-align:1px;
 }
 nav .badge:empty{display:none}
 
@@ -79,6 +79,7 @@ main{max-width:640px;margin:0 auto;padding:0 12px}
 .tag-buy{display:inline-block;margin-right:7px;padding:2px 6px;border-radius:2px;background:var(--red);color:#fff;font-size:11px;font-weight:800;letter-spacing:.1em;vertical-align:2px}
 .meta{display:block;margin-top:5px;font-size:13px;color:var(--dim);line-height:1.5;overflow-wrap:anywhere}
 .unit{display:inline-block;margin-right:6px;padding:1px 5px;border:1.5px solid var(--line);border-radius:2px;font-size:11px;font-weight:800;letter-spacing:.06em;color:var(--dim)}
+.last{display:block;margin-top:3px;font-size:12px;color:var(--dim);font-weight:600}
 
 /* the three-band shelf tag */
 .seg{display:flex;flex:none;border:2px solid var(--ink);border-radius:3px;overflow:hidden;background:var(--card)}
@@ -104,11 +105,49 @@ main{max-width:640px;margin:0 auto;padding:0 12px}
 .tag-info{flex:1;min-width:0}
 .tag-cat{font-size:10.5px;font-weight:800;letter-spacing:.16em;color:var(--dim);margin-bottom:3px}
 .done{flex:none;padding:0 18px;height:44px;border-radius:3px;background:var(--ink);color:#fff;font-size:13.5px;font-weight:800;letter-spacing:.08em}
+.est{font-family:"Archivo",sans-serif;font-weight:800;font-variant-numeric:tabular-nums}
 .empty{text-align:center;padding:72px 24px 40px}
 .empty b{display:block;font-size:19px;font-weight:800;letter-spacing:.06em;margin-bottom:9px}
 .empty span{font-size:14px;color:var(--dim);line-height:1.7}
 .stamp-btn{display:block;width:100%;max-width:300px;margin:26px auto 0;padding:16px;border:2px solid var(--ink);border-radius:3px;background:transparent;font-size:13.5px;font-weight:800;letter-spacing:.1em}
 .stamp-btn:disabled{border-color:var(--line);color:var(--dim);cursor:default}
+.subtotal{display:flex;align-items:baseline;justify-content:space-between;margin-top:14px;padding:14px 16px;background:var(--card);border-radius:3px}
+.subtotal span{font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--dim)}
+.subtotal b{font-family:"Archivo",sans-serif;font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
+.subtotal b small{font-size:13px;margin-left:2px}
+
+/* ============ record tab ============ */
+.period{display:flex;border:2px solid var(--ink);border-radius:3px;overflow:hidden;margin:18px 0 18px}
+.period button{flex:1;height:44px;font-size:13px;font-weight:800;letter-spacing:.06em;border-left:2px solid var(--ink);color:var(--dim);background:var(--card)}
+.period button:first-child{border-left:none}
+.period button[aria-selected="true"]{background:var(--ink);color:#fff}
+.total{background:var(--ink);color:#fff;border-radius:3px;padding:20px}
+.total p{margin:0 0 12px;font-size:11px;font-weight:800;letter-spacing:.2em;color:rgba(255,255,255,.55)}
+.total b{font-family:"Archivo",sans-serif;font-size:38px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;display:block}
+.total b small{font-size:17px;margin-left:4px;font-weight:800}
+.total .sub{margin-top:14px;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.6)}
+.brk{background:var(--card);border-radius:3px;padding:16px}
+.brk-row{margin-bottom:15px}
+.brk-row:last-child{margin-bottom:0}
+.brk-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:13.5px;font-weight:800;margin-bottom:6px}
+.brk-top em{font-style:normal;font-family:"Archivo",sans-serif;font-variant-numeric:tabular-nums;white-space:nowrap}
+.brk-bar{height:8px;background:#EDEFEC;border-radius:2px;overflow:hidden}
+.brk-bar i{display:block;height:100%;background:var(--ink);border-radius:2px}
+.rank{background:var(--card);border-radius:3px;overflow:hidden}
+.rank-row{display:flex;align-items:center;gap:12px;padding:14px 16px;border-top:1px solid var(--line)}
+.rank-row:first-child{border-top:none}
+.rank-name{flex:1;min-width:0;font-size:15px;font-weight:800;overflow-wrap:anywhere}
+.rank-name span{display:block;font-size:12px;color:var(--dim);font-weight:600;margin-top:3px}
+.rank-sum{font-family:"Archivo",sans-serif;font-size:16px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.hist{background:var(--card);border-radius:3px;overflow:hidden}
+.hist-row{display:flex;align-items:center;gap:12px;width:100%;padding:13px 16px;border-top:1px solid var(--line);text-align:left}
+.hist-row:first-child{border-top:none}
+.hist-date{font-family:"Archivo",sans-serif;font-size:12.5px;font-weight:700;color:var(--dim);width:44px;flex:none;font-variant-numeric:tabular-nums}
+.hist-name{flex:1;min-width:0;font-size:15px;font-weight:700;overflow-wrap:anywhere}
+.hist-name i{font-style:normal;color:var(--dim);font-size:12.5px;margin-left:5px}
+.hist-price{font-family:"Archivo",sans-serif;font-size:15px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.hist-price.none{color:var(--red);font-family:inherit;font-size:12px;font-weight:800}
+.more-btn{width:100%;padding:14px;margin-top:8px;font-size:12.5px;font-weight:800;letter-spacing:.1em;color:var(--dim)}
 
 /* ============ bottom bar ============ */
 .bar{position:fixed;left:0;right:0;bottom:0;z-index:50;padding:12px;padding-bottom:calc(env(safe-area-inset-bottom) + 12px);background:linear-gradient(to top,var(--paper) 62%,rgba(223,226,221,0))}
@@ -136,7 +175,6 @@ main{max-width:640px;margin:0 auto;padding:0 12px}
 .hint{font-size:12.5px;color:var(--dim);margin:7px 0 0;line-height:1.55}
 .pair{display:flex;gap:10px}
 .pair .field{flex:1;margin-bottom:0}
-/* live preview of the three bands */
 .preview{margin:14px 0 0;padding:13px 14px;background:#F7F8F6;border-radius:3px}
 .preview p{margin:0 0 9px;font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--dim)}
 .pv-rows{display:flex;flex-direction:column;gap:6px}
@@ -152,7 +190,7 @@ main{max-width:640px;margin:0 auto;padding:0 12px}
 
 :focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
-@media (max-width:360px){.seg button{min-width:42px;font-size:12px}.name{font-size:16px}}
+@media (max-width:360px){.seg button{min-width:42px;font-size:12px}.name{font-size:16px}nav button{font-size:11.5px}}
 </style>
 </head>
 <body>
@@ -168,6 +206,7 @@ main{max-width:640px;margin:0 auto;padding:0 12px}
     <button data-tab="month" aria-selected="false">月次<span class="badge" data-b="month"></span></button>
     <button data-tab="year" aria-selected="false">年次<span class="badge" data-b="year"></span></button>
     <button data-tab="buy" aria-selected="false">買うもの</button>
+    <button data-tab="rec" aria-selected="false">記録</button>
   </nav>
 </header>
 
@@ -176,6 +215,8 @@ main{max-width:640px;margin:0 auto;padding:0 12px}
 <div class="bar" id="bar"><button id="barBtn"></button></div>
 
 <div class="backdrop" id="backdrop"></div>
+
+<!-- 品目の設定 -->
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
   <h2 id="sheetTitle">品目の設定</h2>
   <div class="field">
@@ -185,6 +226,11 @@ main{max-width:640px;margin:0 auto;padding:0 12px}
   <div class="field">
     <label for="f-memo">メモ（銘柄・容量・購入先）</label>
     <input id="f-memo" type="text" placeholder="例：キュキュット 240ml／西友">
+  </div>
+  <div class="field">
+    <label for="f-price">目安価格（円）</label>
+    <input id="f-price" type="number" min="0" max="999999" inputmode="numeric" placeholder="例：198">
+    <p class="hint">「買った」を押したとき、この金額で記録されます。違ったら記録タブで直せます。</p>
   </div>
   <div class="field">
     <label for="f-unit">数える単位</label>
@@ -226,49 +272,100 @@ main{max-width:640px;margin:0 auto;padding:0 12px}
   <button class="btn-del" id="btnDel">この品目を削除する</button>
 </div>
 
+<!-- 購入記録 -->
+<div class="sheet" id="logSheet" role="dialog" aria-modal="true" aria-labelledby="logTitle">
+  <h2 id="logTitle">購入の記録</h2>
+  <div class="field" id="logPickWrap">
+    <label for="g-item">品目</label>
+    <select id="g-item"></select>
+  </div>
+  <div class="field" id="logNameWrap">
+    <label for="g-name">品名</label>
+    <input id="g-name" type="text">
+  </div>
+  <div class="field">
+    <label for="g-date">購入日</label>
+    <input id="g-date" type="date">
+  </div>
+  <div class="pair">
+    <div class="field">
+      <label for="g-price">価格（円）</label>
+      <input id="g-price" type="number" min="0" max="999999" inputmode="numeric">
+    </div>
+    <div class="field">
+      <label for="g-qty">個数</label>
+      <input id="g-qty" type="number" min="1" max="99" inputmode="numeric">
+    </div>
+  </div>
+  <p class="hint" id="g-sub"></p>
+  <div class="sheet-actions">
+    <button class="btn-cancel" id="btnLogCancel">やめる</button>
+    <button class="btn-save" id="btnLogSave">保存する</button>
+  </div>
+  <button class="btn-del" id="btnLogDel">この記録を削除する</button>
+</div>
+
 <script>
 const KEY='stock:v1';
 
-/* [頻度, カテゴリ, 品名, 赤ライン, 黄ライン, 単位] */
+/* [頻度, カテゴリ, 品名, 赤ライン, 黄ライン, 単位, 目安価格] */
 const PRESET=[
- ['week','キッチン','ラップ',0,1,''],['week','キッチン','ジップ袋',0,1,''],
- ['week','キッチン','キッチンペーパー',1,3,'ロール'],
- ['week','キッチン','食器用洗剤',0,1,''],['week','キッチン','スポンジ',0,2,'個'],
- ['week','キッチン','排水口ネット',5,15,'枚'],['week','キッチン','ゴミ袋（指定袋）',5,15,'枚'],
- ['week','紙・衛生','トイレットペーパー',4,8,'ロール'],['week','紙・衛生','ティッシュ',1,3,'箱'],
- ['week','紙・衛生','ウェットティッシュ',0,1,''],
- ['week','洗濯','洗濯洗剤',0,1,''],['week','洗濯','柔軟剤',0,1,''],
- ['month','キッチン','アルミホイル',0,1,''],['month','キッチン','クッキングシート',0,1,''],
- ['month','キッチン','キッチン泡ハイター',0,1,''],
- ['month','洗面・風呂','シャンプー',0,1,''],['month','洗面・風呂','コンディショナー',0,1,''],
- ['month','洗面・風呂','ボディソープ',0,1,''],['month','洗面・風呂','洗顔料',0,1,''],
- ['month','洗面・風呂','歯磨き粉',0,1,''],['month','洗面・風呂','歯ブラシ',2,4,'本'],
- ['month','洗面・風呂','デンタルフロス',0,1,''],['month','洗面・風呂','髭剃り替刃',1,3,'個'],
- ['month','洗面・風呂','風呂用洗剤',0,1,''],['month','洗面・風呂','入浴剤',0,1,''],
- ['month','トイレ','トイレ洗剤',0,1,''],['month','トイレ','流せるクリーナー',0,1,''],['month','トイレ','消臭剤',0,1,''],
- ['month','洗濯','漂白剤',0,1,''],['month','洗濯','洗濯槽クリーナー',0,1,''],['month','洗濯','洗濯ネット',0,1,''],
- ['month','掃除','フロアワイパーシート',5,15,'枚'],['month','掃除','掃除機の紙パック／フィルター',1,3,'個'],
- ['month','掃除','除菌シート',0,1,''],['month','掃除','ゴム手袋',0,1,''],['month','掃除','重曹・クエン酸',0,1,''],
- ['month','薬・救急','解熱鎮痛薬',0,1,''],['month','薬・救急','風邪薬',0,1,''],['month','薬・救急','胃腸薬',0,1,''],
- ['month','薬・救急','消毒液',0,1,''],['month','薬・救急','絆創膏',5,15,'枚'],['month','薬・救急','湿布',5,15,'枚'],
- ['year','設備','乾電池（単3）',2,6,'本'],['year','設備','乾電池（単4）',2,6,'本'],
- ['year','設備','電球・LED',0,1,''],['year','設備','火災警報器（電池／本体10年）',0,1,''],
- ['year','設備','換気扇フィルター',1,3,'枚'],['year','設備','エアコンフィルター',0,1,''],
- ['year','設備','浄水器カートリッジ',0,1,''],['year','設備','ライター・チャッカマン',0,1,''],
- ['year','季節','虫除け・殺虫剤',0,1,''],['year','季節','カイロ',5,15,'個'],
- ['year','季節','除湿剤',1,3,'個'],['year','季節','加湿器フィルター',0,1,''],
- ['year','季節','日焼け止め',0,1,''],['year','季節','衣類用防虫剤',0,1,''],
- ['year','備蓄','飲料水（2L）',6,12,'本'],['year','備蓄','レトルト・非常食',6,12,'食'],
- ['year','備蓄','カセットボンベ',3,6,'本'],
+ ['week','キッチン','ラップ',0,1,'',300],['week','キッチン','ジップ袋',0,1,'',300],
+ ['week','キッチン','キッチンペーパー',1,3,'ロール',350],
+ ['week','キッチン','食器用洗剤',0,1,'',250],['week','キッチン','スポンジ',0,2,'個',200],
+ ['week','キッチン','排水口ネット',5,15,'枚',200],['week','キッチン','ゴミ袋（指定袋）',5,15,'枚',400],
+ ['week','紙・衛生','トイレットペーパー',4,8,'ロール',500],['week','紙・衛生','ティッシュ',1,3,'箱',400],
+ ['week','紙・衛生','ウェットティッシュ',0,1,'',250],
+ ['week','洗濯','洗濯洗剤',0,1,'',500],['week','洗濯','柔軟剤',0,1,'',450],
+ ['month','キッチン','アルミホイル',0,1,'',250],['month','キッチン','クッキングシート',0,1,'',300],
+ ['month','キッチン','キッチン泡ハイター',0,1,'',300],
+ ['month','洗面・風呂','シャンプー',0,1,'',800],['month','洗面・風呂','コンディショナー',0,1,'',800],
+ ['month','洗面・風呂','ボディソープ',0,1,'',700],['month','洗面・風呂','洗顔料',0,1,'',600],
+ ['month','洗面・風呂','歯磨き粉',0,1,'',400],['month','洗面・風呂','歯ブラシ',2,4,'本',300],
+ ['month','洗面・風呂','デンタルフロス',0,1,'',400],['month','洗面・風呂','髭剃り替刃',1,3,'個',1500],
+ ['month','洗面・風呂','風呂用洗剤',0,1,'',350],['month','洗面・風呂','入浴剤',0,1,'',600],
+ ['month','トイレ','トイレ洗剤',0,1,'',300],['month','トイレ','流せるクリーナー',0,1,'',300],['month','トイレ','消臭剤',0,1,'',400],
+ ['month','洗濯','漂白剤',0,1,'',300],['month','洗濯','洗濯槽クリーナー',0,1,'',400],['month','洗濯','洗濯ネット',0,1,'',400],
+ ['month','掃除','フロアワイパーシート',5,15,'枚',500],['month','掃除','掃除機の紙パック／フィルター',1,3,'個',800],
+ ['month','掃除','除菌シート',0,1,'',300],['month','掃除','ゴム手袋',0,1,'',300],['month','掃除','重曹・クエン酸',0,1,'',300],
+ ['month','薬・救急','解熱鎮痛薬',0,1,'',800],['month','薬・救急','風邪薬',0,1,'',1200],['month','薬・救急','胃腸薬',0,1,'',900],
+ ['month','薬・救急','消毒液',0,1,'',500],['month','薬・救急','絆創膏',5,15,'枚',400],['month','薬・救急','湿布',5,15,'枚',800],
+ ['year','設備','乾電池（単3）',2,6,'本',600],['year','設備','乾電池（単4）',2,6,'本',600],
+ ['year','設備','電球・LED',0,1,'',1000],['year','設備','火災警報器（電池／本体10年）',0,1,'',3500],
+ ['year','設備','換気扇フィルター',1,3,'枚',500],['year','設備','エアコンフィルター',0,1,'',1000],
+ ['year','設備','浄水器カートリッジ',0,1,'',3000],['year','設備','ライター・チャッカマン',0,1,'',200],
+ ['year','季節','虫除け・殺虫剤',0,1,'',800],['year','季節','カイロ',5,15,'個',500],
+ ['year','季節','除湿剤',1,3,'個',500],['year','季節','加湿器フィルター',0,1,'',1500],
+ ['year','季節','日焼け止め',0,1,'',900],['year','季節','衣類用防虫剤',0,1,'',600],
+ ['year','備蓄','飲料水（2L）',6,12,'本',700],['year','備蓄','レトルト・非常食',6,12,'食',1500],
+ ['year','備蓄','カセットボンベ',3,6,'本',500],
 ];
+/* 既存データに目安価格を補う用 */
+const PRICE_BY_NAME={}; PRESET.forEach(p=>PRICE_BY_NAME[p[2]]=p[6]);
 
 const FREQ_LABEL={week:'週次',month:'月次',year:'年次'};
-let state=null, tab='week', editingId=null, saveTimer=null;
+let state=null, tab='week', period='month', histLimit=20;
+let editingId=null, editingLogId=null, saveTimer=null, lastBuy={};
 
+/* ---------- 日付 ---------- */
+function todayStr(d){
+  d=d||new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+const shortDate=s=>{const p=s.split('-');return (+p[1])+'/'+(+p[2]);};
+function daysAgo(s){
+  const p=s.split('-').map(Number);
+  const then=new Date(p[0],p[1]-1,p[2]);
+  const now=new Date(); now.setHours(0,0,0,0);
+  return Math.round((now-then)/86400000);
+}
+const yen=n=>n.toLocaleString('ja-JP');
+
+/* ---------- 保存 ---------- */
 function seed(){
   return {
-    items:PRESET.map((p,i)=>({id:'i'+i,freq:p[0],cat:p[1],name:p[2],red:p[3],amber:p[4],unit:p[5],memo:'',band:2})),
-    seq:PRESET.length, lastCheck:null
+    items:PRESET.map((p,i)=>({id:'i'+i,freq:p[0],cat:p[1],name:p[2],red:p[3],amber:p[4],unit:p[5],price:p[6],memo:'',band:2})),
+    seq:PRESET.length, lastCheck:null, log:[], logSeq:0
   };
 }
 function migrate(s){
@@ -280,7 +377,10 @@ function migrate(s){
     }
     if(it.band===undefined){ it.band = it.count!==undefined ? it.count : 2; delete it.count; }
     if(it.amber<=it.red) it.amber=it.red+1;
+    if(it.price===undefined) it.price = PRICE_BY_NAME[it.name] || 0;
   });
+  if(!Array.isArray(s.log)) s.log=[];
+  if(s.logSeq===undefined) s.logSeq=s.log.length;
   return s;
 }
 async function load(){
@@ -298,6 +398,7 @@ function save(){
   },250);
 }
 
+/* ---------- 判定 ---------- */
 const status=it=> it.band===0 ? 'buy' : (it.band===1 ? 'low' : 'ok');
 const buyList=()=>state.items.filter(it=>status(it)==='buy');
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -317,9 +418,34 @@ function bandWords(it){
     : [l[0]+u, l[1]+u, l[2].replace('+','')+u+'以上'];
 }
 
+/* ---------- 記録 ---------- */
+function addLog(it){
+  state.log.push({
+    id:'L'+(state.logSeq++), itemId:it.id, name:it.name, cat:it.cat,
+    date:todayStr(), price:it.price||0, qty:1
+  });
+}
+function buildLastBuy(){
+  lastBuy={};
+  state.log.forEach(l=>{
+    if(!l.itemId) return;
+    if(!lastBuy[l.itemId] || l.date>lastBuy[l.itemId].date) lastBuy[l.itemId]=l;
+  });
+}
+function periodLog(){
+  const now=new Date(), y=now.getFullYear(), m=now.getMonth()+1;
+  const ym=y+'-'+String(m).padStart(2,'0');
+  if(period==='month') return state.log.filter(l=>l.date.startsWith(ym));
+  if(period==='year')  return state.log.filter(l=>l.date.startsWith(y+'-'));
+  return state.log.slice();
+}
+
+/* ---------- render ---------- */
 function render(){
+  buildLastBuy();
   renderHeader();
-  document.getElementById('main').innerHTML = tab==='buy' ? viewBuy() : viewList(tab);
+  const main=document.getElementById('main');
+  main.innerHTML = tab==='buy' ? viewBuy() : tab==='rec' ? viewRec() : viewList(tab);
   renderBar();
   document.getElementById('catlist').innerHTML=
     [...new Set(state.items.map(i=>i.cat))].map(c=>`<option value="${esc(c)}">`).join('');
@@ -359,10 +485,13 @@ function rowHTML(it){
   const metaBits=[];
   if(it.unit) metaBits.push(`<span class="unit">${esc(it.unit)}</span>`);
   if(it.memo) metaBits.push(esc(it.memo));
+  const lb=lastBuy[it.id];
+  const lastLine = lb ? `<span class="last">前回 ${shortDate(lb.date)}（${daysAgo(lb.date)}日前）</span>` : '';
   return `<div class="row ${st==='buy'?'is-buy':st==='low'?'is-low':''}">
     <button class="name-btn" data-edit="${it.id}">
       <span class="name">${st==='buy'?'<span class="tag-buy">買う</span>':''}${esc(it.name)}</span>
       ${metaBits.length?`<span class="meta">${metaBits.join('')}</span>`:''}
+      ${lastLine}
     </button>
     <div class="seg" role="group" aria-label="${esc(it.name)}の在庫">
       ${[0,1,2].map(v=>`<button class="s${v}${wide?' wide':''}" data-set="${it.id}" data-v="${v}"
@@ -378,12 +507,14 @@ function viewBuy(){
       <span>赤の帯に入った品目が<br>ここに集まります。</span>
       <button class="stamp-btn" id="btnStamp">今日チェックした</button>
     </div>`;
+  const est=list.reduce((s,it)=>s+(it.price||0),0);
   return `<section class="cat">
       <div class="cat-head">買うもの ${list.length}点</div>
       <div class="tags">
         ${list.map(it=>{
           const bits=[];
-          if(!isSimple(it)) bits.push(`${it.red}${it.unit||''}以下`);
+          if(!isSimple(it)) bits.push(`${it.red}${esc(it.unit||'')}以下`);
+          if(it.price) bits.push(`<span class="est">${yen(it.price)}円</span>`);
           if(it.memo) bits.push(esc(it.memo));
           return `<div class="tag">
             <div class="tag-info">
@@ -395,8 +526,82 @@ function viewBuy(){
           </div>`;
         }).join('')}
       </div>
+      <div class="subtotal"><span>小計（目安）</span><b>${yen(est)}<small>円</small></b></div>
       <button class="stamp-btn" id="btnStamp">今日チェックした</button>
     </section>`;
+}
+
+function viewRec(){
+  const logs=periodLog();
+  const total=logs.reduce((s,l)=>s+(l.price||0)*(l.qty||1),0);
+  const label={month:'今月',year:'今年',all:'全期間'}[period];
+  const missing=logs.filter(l=>!l.price).length;
+
+  let html=`<div class="period" id="periodCtl">
+    ${['month','year','all'].map(p=>`<button data-p="${p}" aria-selected="${period===p}">${
+      {month:'今月',year:'今年',all:'全期間'}[p]}</button>`).join('')}
+  </div>`;
+
+  html+=`<div class="total">
+    <p>${label}の合計</p>
+    <b>${yen(total)}<small>円</small></b>
+    <div class="sub">${logs.length}件の購入${missing?`　・　価格未入力 ${missing}件`:''}</div>
+  </div>`;
+
+  if(!logs.length){
+    html+=`<div class="empty"><b>まだ記録がありません</b>
+      <span>買うものタブで「買った」を押すと<br>ここに積み上がります。</span></div>`;
+    html+=`<button class="add-btn" id="btnLogNew">＋ 購入を手入力する</button>`;
+    return html;
+  }
+
+  /* カテゴリ別 */
+  const byCat={};
+  logs.forEach(l=>{ byCat[l.cat]=(byCat[l.cat]||0)+(l.price||0)*(l.qty||1); });
+  const cats=Object.entries(byCat).sort((a,b)=>b[1]-a[1]);
+  const max=cats[0][1]||1;
+  html+=`<section class="cat"><div class="cat-head">カテゴリ別</div>
+    <div class="brk">${cats.map(([c,v])=>`
+      <div class="brk-row">
+        <div class="brk-top"><span>${esc(c)}</span><em>${yen(v)}円</em></div>
+        <div class="brk-bar"><i style="width:${Math.max(2,v/max*100)}%"></i></div>
+      </div>`).join('')}
+    </div></section>`;
+
+  /* 品目別 */
+  const byItem={};
+  logs.forEach(l=>{
+    const k=l.itemId||l.name;
+    if(!byItem[k]) byItem[k]={name:l.name,count:0,sum:0,qty:0};
+    byItem[k].count++; byItem[k].qty+=(l.qty||1); byItem[k].sum+=(l.price||0)*(l.qty||1);
+  });
+  const ranked=Object.values(byItem).sort((a,b)=>b.sum-a.sum);
+  html+=`<section class="cat"><div class="cat-head">品目別</div>
+    <div class="rank">${ranked.map(r=>`
+      <div class="rank-row">
+        <div class="rank-name">${esc(r.name)}
+          <span>${r.count}回　平均 ${yen(Math.round(r.sum/Math.max(1,r.qty)))}円</span>
+        </div>
+        <div class="rank-sum">${yen(r.sum)}円</div>
+      </div>`).join('')}
+    </div></section>`;
+
+  /* 履歴 */
+  const sorted=logs.slice().sort((a,b)=> a.date<b.date?1:a.date>b.date?-1:(a.id<b.id?1:-1));
+  const shown=sorted.slice(0,histLimit);
+  html+=`<section class="cat"><div class="cat-head">履歴</div>
+    <div class="hist">${shown.map(l=>`
+      <button class="hist-row" data-log="${l.id}">
+        <span class="hist-date">${shortDate(l.date)}</span>
+        <span class="hist-name">${esc(l.name)}${(l.qty||1)>1?`<i>×${l.qty}</i>`:''}</span>
+        ${l.price?`<span class="hist-price">${yen(l.price*(l.qty||1))}円</span>`
+                 :`<span class="hist-price none">未入力</span>`}
+      </button>`).join('')}
+    </div>
+    ${sorted.length>histLimit?`<button class="more-btn" id="btnMore">もっと見る（残り${sorted.length-histLimit}件）</button>`:''}
+    <button class="add-btn" id="btnLogNew">＋ 購入を手入力する</button>
+  </section>`;
+  return html;
 }
 
 function renderBar(){
@@ -411,7 +616,7 @@ function renderBar(){
 /* ---------- events ---------- */
 document.getElementById('nav').addEventListener('click',e=>{
   const b=e.target.closest('button[data-tab]'); if(!b) return;
-  tab=b.dataset.tab; render(); window.scrollTo(0,0);
+  tab=b.dataset.tab; histLimit=20; render(); window.scrollTo(0,0);
 });
 document.getElementById('barBtn').addEventListener('click',()=>{ tab='buy'; render(); window.scrollTo(0,0); });
 
@@ -419,13 +624,26 @@ document.getElementById('main').addEventListener('click',e=>{
   const set=e.target.closest('[data-set]');
   if(set){ const it=state.items.find(i=>i.id===set.dataset.set);
     it.band=+set.dataset.v; save(); render(); return; }
+
   const bought=e.target.closest('[data-bought]');
   if(bought){ const it=state.items.find(i=>i.id===bought.dataset.bought);
-    it.band=2; save(); render(); return; }
+    it.band=2; addLog(it); save(); render(); return; }
+
   const ed=e.target.closest('[data-edit]');
   if(ed){ openSheet(ed.dataset.edit); return; }
+
   const nw=e.target.closest('[data-new]');
   if(nw){ openSheet(null,nw.dataset.new); return; }
+
+  const pc=e.target.closest('[data-p]');
+  if(pc){ period=pc.dataset.p; histLimit=20; render(); return; }
+
+  const lg=e.target.closest('[data-log]');
+  if(lg){ openLogSheet(lg.dataset.log); return; }
+
+  if(e.target.id==='btnMore'){ histLimit+=40; render(); return; }
+  if(e.target.id==='btnLogNew'){ openLogSheet(null); return; }
+
   if(e.target.id==='btnStamp'){
     state.lastCheck=new Date().toLocaleDateString('ja-JP',{month:'numeric',day:'numeric'});
     save(); renderHeader();
@@ -433,8 +651,9 @@ document.getElementById('main').addEventListener('click',e=>{
   }
 });
 
-/* ---------- sheet ---------- */
+/* ---------- 品目シート ---------- */
 const sheet=document.getElementById('sheet'), backdrop=document.getElementById('backdrop');
+const logSheet=document.getElementById('logSheet');
 const $=id=>document.getElementById(id);
 
 function readForm(){
@@ -445,8 +664,7 @@ function readForm(){
 }
 function drawPreview(){
   const f=readForm();
-  const fake={red:f.red,amber:f.amber,unit:f.unit};
-  const w=bandWords(fake);
+  const w=bandWords({red:f.red,amber:f.amber,unit:f.unit});
   $('preview').innerHTML=[0,1,2].map(i=>
     `<div class="pv"><i class="p${i}"></i>${esc(w[i])} <em>${['→ 買う','→ そろそろ','→ ある'][i]}</em></div>`
   ).join('');
@@ -459,6 +677,7 @@ function openSheet(id,freq){
   $('sheetTitle').textContent=it?'品目の設定':'品目を追加';
   $('f-name').value=it?it.name:'';
   $('f-memo').value=it?it.memo:'';
+  $('f-price').value=it?(it.price||''):'';
   $('f-unit').value=it?it.unit:'';
   $('f-red').value=it?it.red:0;
   $('f-amber').value=it?it.amber:1;
@@ -470,30 +689,104 @@ function openSheet(id,freq){
   sheet.scrollTop=0;
   if(!it) setTimeout(()=>$('f-name').focus(),280);
 }
-function closeSheet(){ sheet.classList.remove('open'); backdrop.classList.remove('open'); editingId=null; }
-backdrop.addEventListener('click',closeSheet);
-$('btnCancel').addEventListener('click',closeSheet);
-document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&sheet.classList.contains('open')) closeSheet(); });
+function closeAll(){
+  sheet.classList.remove('open'); logSheet.classList.remove('open');
+  backdrop.classList.remove('open'); editingId=null; editingLogId=null;
+}
+backdrop.addEventListener('click',closeAll);
+$('btnCancel').addEventListener('click',closeAll);
+$('btnLogCancel').addEventListener('click',closeAll);
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&(sheet.classList.contains('open')||logSheet.classList.contains('open'))) closeAll();
+});
 
 $('btnSave').addEventListener('click',()=>{
   const name=$('f-name').value.trim();
   if(!name){ $('f-name').focus(); return; }
   const f=readForm();
+  let price=parseInt($('f-price').value,10); if(isNaN(price)||price<0) price=0;
   const data={
-    name, memo:$('f-memo').value.trim(),
+    name, memo:$('f-memo').value.trim(), price,
     unit:f.unit, red:f.red, amber:f.amber,
     freq:$('f-freq').value,
     cat:$('f-cat').value.trim()||'その他'
   };
   if(editingId) Object.assign(state.items.find(i=>i.id===editingId),data);
   else{ state.items.push({id:'n'+(state.seq++),band:2,...data}); tab=data.freq; }
-  save(); closeSheet(); render();
+  save(); closeAll(); render();
 });
 $('btnDel').addEventListener('click',()=>{
   const it=state.items.find(i=>i.id===editingId);
-  if(!confirm(`「${it.name}」を削除しますか？`)) return;
+  if(!confirm(`「${it.name}」を削除しますか？\n（購入の記録は残ります）`)) return;
   state.items=state.items.filter(i=>i.id!==editingId);
-  save(); closeSheet(); render();
+  save(); closeAll(); render();
+});
+
+/* ---------- 記録シート ---------- */
+function updateLogSub(){
+  const p=parseInt($('g-price').value,10)||0;
+  const q=parseInt($('g-qty').value,10)||1;
+  $('g-sub').textContent = q>1 ? `小計 ${yen(p*q)}円` : '';
+}
+['g-price','g-qty'].forEach(id=>$(id).addEventListener('input',updateLogSub));
+
+$('g-item').addEventListener('change',()=>{
+  if(editingLogId) return;
+  const it=state.items.find(i=>i.id===$('g-item').value);
+  if(it){ $('g-price').value=it.price||''; updateLogSub(); }
+});
+
+function openLogSheet(logId){
+  editingLogId=logId;
+  const l=logId?state.log.find(x=>x.id===logId):null;
+  $('logTitle').textContent=l?'記録を編集':'購入を記録';
+
+  if(l){
+    $('logPickWrap').style.display='none';
+    $('logNameWrap').style.display='block';
+    $('g-name').value=l.name;
+    $('g-date').value=l.date;
+    $('g-price').value=l.price||'';
+    $('g-qty').value=l.qty||1;
+    $('btnLogDel').style.display='block';
+  }else{
+    $('logPickWrap').style.display='block';
+    $('logNameWrap').style.display='none';
+    $('g-item').innerHTML=state.items.map(i=>
+      `<option value="${i.id}">${esc(i.cat)}／${esc(i.name)}</option>`).join('');
+    const first=state.items[0];
+    $('g-date').value=todayStr();
+    $('g-price').value=first?(first.price||''):'';
+    $('g-qty').value=1;
+    $('btnLogDel').style.display='none';
+  }
+  updateLogSub();
+  logSheet.classList.add('open'); backdrop.classList.add('open');
+  logSheet.scrollTop=0;
+}
+
+$('btnLogSave').addEventListener('click',()=>{
+  let price=parseInt($('g-price').value,10); if(isNaN(price)||price<0) price=0;
+  let qty=parseInt($('g-qty').value,10); if(isNaN(qty)||qty<1) qty=1;
+  const date=$('g-date').value||todayStr();
+
+  if(editingLogId){
+    const l=state.log.find(x=>x.id===editingLogId);
+    const nm=$('g-name').value.trim();
+    Object.assign(l,{name:nm||l.name,date,price,qty});
+  }else{
+    const it=state.items.find(i=>i.id===$('g-item').value);
+    if(!it) return;
+    state.log.push({id:'L'+(state.logSeq++),itemId:it.id,name:it.name,cat:it.cat,date,price,qty});
+  }
+  save(); closeAll(); render();
+});
+
+$('btnLogDel').addEventListener('click',()=>{
+  const l=state.log.find(x=>x.id===editingLogId);
+  if(!confirm(`${shortDate(l.date)}「${l.name}」の記録を削除しますか？`)) return;
+  state.log=state.log.filter(x=>x.id!==editingLogId);
+  save(); closeAll(); render();
 });
 
 load();
