@@ -75,7 +75,10 @@ main{max-width:640px;margin:0 auto;padding:0 12px}
 .row.is-low::before{background:var(--amber)}
 
 .name-btn{flex:1;min-width:0;text-align:left;padding:8px 0;min-height:var(--tap)}
-.name{display:block;font-size:17px;font-weight:800;letter-spacing:.01em;line-height:1.35;overflow-wrap:anywhere}
+.name{display:flex;align-items:baseline;gap:2px;font-size:17px;font-weight:800;letter-spacing:.01em;line-height:1.35}
+.nm{overflow-wrap:anywhere;min-width:0}
+.chev{flex:none;margin-left:auto;padding-left:10px;color:var(--dim);font-size:16px;font-weight:800}
+.tip{margin:16px 4px -4px;font-size:12px;font-weight:700;color:var(--dim);line-height:1.6}
 .tag-buy{display:inline-block;margin-right:7px;padding:2px 6px;border-radius:2px;background:var(--red);color:#fff;font-size:11px;font-weight:800;letter-spacing:.1em;vertical-align:2px}
 .meta{display:block;margin-top:5px;font-size:13px;color:var(--dim);line-height:1.5;overflow-wrap:anywhere}
 .unit{display:inline-block;margin-right:6px;padding:1px 5px;border:1.5px solid var(--line);border-radius:2px;font-size:11px;font-weight:800;letter-spacing:.06em;color:var(--dim)}
@@ -136,8 +139,11 @@ main{max-width:640px;margin:0 auto;padding:0 12px}
 .notice{display:flex;align-items:flex-start;gap:10px;margin:18px 0 -8px;padding:13px 14px;background:var(--ink);color:#fff;border-radius:3px;font-size:13px;font-weight:700;line-height:1.55}
 .notice span{flex:1}
 .notice button{flex:none;width:28px;height:28px;color:rgba(255,255,255,.65);font-size:17px;font-weight:800;line-height:1}
-.reset-btn{width:100%;margin-top:28px;padding:15px;border:2px solid var(--line);border-radius:3px;font-size:12.5px;font-weight:800;letter-spacing:.06em;color:var(--dim)}
-.reset-btn:hover{border-color:var(--red);color:var(--red)}
+.foot{margin-top:28px;display:flex;flex-direction:column;gap:9px}
+.foot .where{text-align:center;font-size:11.5px;font-weight:700;color:var(--dim);margin:2px 0 4px}
+.reset-btn{width:100%;padding:15px;border:2px solid var(--line);border-radius:3px;font-size:12.5px;font-weight:800;letter-spacing:.06em;color:var(--dim)}
+.reset-btn:hover{border-color:var(--dim);color:var(--ink)}
+.reset-btn.danger:hover{border-color:var(--red);color:var(--red)}
 .total{background:var(--ink);color:#fff;border-radius:3px;padding:20px}
 .total p{margin:0 0 12px;font-size:11px;font-weight:800;letter-spacing:.2em;color:rgba(255,255,255,.55)}
 .total b{font-family:"Archivo",sans-serif;font-size:38px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;display:block}
@@ -241,6 +247,19 @@ main{max-width:640px;margin:0 auto;padding:0 12px}
     <input id="f-name" type="text" placeholder="例：食器用洗剤">
   </div>
   <div class="field">
+    <label for="f-freq">確認頻度</label>
+    <select id="f-freq">
+      <option value="week">週次</option>
+      <option value="month">月次</option>
+      <option value="year">年次</option>
+    </select>
+  </div>
+  <div class="field">
+    <label for="f-cat">カテゴリ</label>
+    <input id="f-cat" type="text" list="catlist" placeholder="例：キッチン">
+    <datalist id="catlist"></datalist>
+  </div>
+  <div class="field">
     <label for="f-memo">メモ（銘柄・容量・購入先）</label>
     <input id="f-memo" type="text" placeholder="例：キュキュット 240ml／西友">
   </div>
@@ -268,19 +287,6 @@ main{max-width:640px;margin:0 auto;padding:0 12px}
   <div class="preview">
     <p>ボタンの表示</p>
     <div class="pv-rows" id="preview"></div>
-  </div>
-  <div class="field" style="margin-top:17px">
-    <label for="f-freq">確認頻度</label>
-    <select id="f-freq">
-      <option value="week">週次</option>
-      <option value="month">月次</option>
-      <option value="year">年次</option>
-    </select>
-  </div>
-  <div class="field">
-    <label for="f-cat">カテゴリ</label>
-    <input id="f-cat" type="text" list="catlist" placeholder="例：キッチン">
-    <datalist id="catlist"></datalist>
   </div>
   <div class="sheet-actions">
     <button class="btn-cancel" id="btnCancel">やめる</button>
@@ -321,6 +327,8 @@ main{max-width:640px;margin:0 auto;padding:0 12px}
   </div>
   <button class="btn-del" id="btnLogDel">この記録を削除する</button>
 </div>
+
+<input type="file" id="fileIn" accept=".json,application/json" style="display:none">
 
 <script>
 const KEY='stock:v1';
@@ -431,10 +439,11 @@ function migrate(s){
 }
 let notice='';
 async function load(){
+  await Store.init();
   try{
-    const r=await window.storage.get(KEY);
-    if(r&&r.value){
-      state=migrate(JSON.parse(r.value));
+    const raw=await Store.get();
+    if(raw){
+      state=migrate(JSON.parse(raw));
       const res=syncPreset(state);
       if(res.added||res.updated){
         const parts=[];
@@ -445,14 +454,66 @@ async function load(){
       }
     }else state=seed();
   }catch(e){ state=seed(); }
+  if(Store.mode==='none'){
+    notice='この環境ではデータを保存できません。閉じると消えるので、記録タブの「データを書き出す」で保管してください。';
+  }
   render();
 }
+const FILE_PREFIX='stock';
+
+/* 保存先を自動で選ぶ：
+   app   = claude.ai のプレビュー内
+   local = ダウンロードしたファイルをブラウザで開いたとき
+   none  = どちらも使えない（閉じると消える） */
+const Store={
+  mode:'none',
+  async init(){
+    if(typeof window!=='undefined' && window.storage && typeof window.storage.get==='function'){
+      this.mode='app'; return;
+    }
+    try{
+      window.localStorage.setItem('__probe__','1');
+      window.localStorage.removeItem('__probe__');
+      this.mode='local';
+    }catch(e){ this.mode='none'; }
+  },
+  async get(){
+    if(this.mode==='app'){
+      try{ const r=await window.storage.get(KEY); return r&&r.value?r.value:null; }
+      catch(e){ return null; }
+    }
+    if(this.mode==='local'){
+      try{ return window.localStorage.getItem(KEY); }catch(e){ return null; }
+    }
+    return null;
+  },
+  async set(v){
+    if(this.mode==='app'){
+      try{ await window.storage.set(KEY,v); return true; }catch(e){ return false; }
+    }
+    if(this.mode==='local'){
+      try{ window.localStorage.setItem(KEY,v); return true; }catch(e){ return false; }
+    }
+    return false;
+  }
+};
+const STORE_LABEL={app:'このプレビュー内',local:'このブラウザ',none:'保存されません'};
+
 function save(){
   clearTimeout(saveTimer);
   saveTimer=setTimeout(async()=>{
-    try{ await window.storage.set(KEY,JSON.stringify(state)); }
-    catch(e){ console.error('保存できませんでした',e); }
+    const ok=await Store.set(JSON.stringify(state));
+    if(!ok) console.error('保存できませんでした');
   },250);
+}
+
+function exportData(){
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=FILE_PREFIX+'-'+todayStr()+'.json';
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1000);
 }
 
 /* ---------- 判定 ---------- */
@@ -558,7 +619,8 @@ function renderHeader(){
 function viewList(freq){
   const items=state.items.filter(it=>it.freq===freq);
   const cats=[...new Set(items.map(i=>i.cat))];
-  return cats.map(cat=>`
+  return `<p class="tip">品名をタップすると、確認頻度・カテゴリ・しきい値・価格を変更できます。</p>`
+    + cats.map(cat=>`
     <section class="cat">
       <div class="cat-head">${esc(cat)}</div>
       <div class="rows">${items.filter(i=>i.cat===cat).map(rowHTML).join('')}</div>
@@ -576,7 +638,7 @@ function rowHTML(it){
   const lastLine = lb ? `<span class="last">前回 ${shortDate(lb.date)}（${daysAgo(lb.date)}日前）</span>` : '';
   return `<div class="row ${st==='buy'?'is-buy':st==='low'?'is-low':''}">
     <button class="name-btn" data-edit="${it.id}">
-      <span class="name">${st==='buy'?'<span class="tag-buy">買う</span>':''}${esc(it.name)}</span>
+      <span class="name">${st==='buy'?'<span class="tag-buy">買う</span>':''}<span class="nm">${esc(it.name)}</span><span class="chev">›</span></span>
       ${metaBits.length?`<span class="meta">${metaBits.join('')}</span>`:''}
       ${lastLine}
     </button>
@@ -659,7 +721,7 @@ function viewRec(){
   if(!logs.length){
     html+=`<div class="empty"><b>この期間の記録はありません</b>
       <span>買うものタブで「買った」を押すと<br>ここに積み上がります。</span></div>`;
-    html+=`<button class="add-btn" id="btnLogNew">＋ 購入を手入力する</button>`;
+    html+=`<button class="add-btn" id="btnLogNew">＋ 購入を手入力する</button>`+recFooter();
     return html;
   }
 
@@ -708,7 +770,7 @@ function viewRec(){
     </div>
     ${sorted.length>histLimit?`<button class="more-btn" id="btnMore">もっと見る（残り${sorted.length-histLimit}件）</button>`:''}
     <button class="add-btn" id="btnLogNew">＋ 購入を手入力する</button>
-    <button class="reset-btn" id="btnReset">HTMLの内容ですべて作り直す</button>
+    ${recFooter()}
   </section>`;
   return html;
 }
@@ -726,6 +788,15 @@ function yearChart(){
         </button>`).join('')}</div>
       <div class="ylabels">${vals.map((v,i)=>`<span>${i+1}</span>`).join('')}</div>
     </div></section>`;
+}
+
+function recFooter(){
+  return `<div class="foot">
+    <div class="where">保存先：${STORE_LABEL[Store.mode]}</div>
+    <button class="reset-btn" id="btnExport">データを書き出す（バックアップ）</button>
+    <button class="reset-btn" id="btnImport">書き出したデータを読み込む</button>
+    <button class="reset-btn danger" id="btnReset">HTMLの内容ですべて作り直す</button>
+  </div>`;
 }
 
 function renderBar(){
@@ -771,6 +842,8 @@ document.getElementById('main').addEventListener('click',e=>{
   const lg=e.target.closest('[data-log]');
   if(lg){ openLogSheet(lg.dataset.log); return; }
 
+  if(e.target.id==='btnExport'){ exportData(); return; }
+  if(e.target.id==='btnImport'){ document.getElementById('fileIn').click(); return; }
   if(e.target.id==='btnNotice'){ notice=''; render(); return; }
   if(e.target.id==='btnReset'){
     if(!confirm('すべての在庫状態と購入記録を消して、HTMLの内容で作り直します。よろしいですか？')) return;
@@ -923,6 +996,23 @@ $('btnLogDel').addEventListener('click',()=>{
   if(!confirm(`${shortDate(l.date)}「${l.name}」の記録を削除しますか？`)) return;
   state.log=state.log.filter(x=>x.id!==editingLogId);
   save(); closeAll(); render();
+});
+
+document.getElementById('fileIn').addEventListener('change',ev=>{
+  const f=ev.target.files&&ev.target.files[0];
+  if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const obj=JSON.parse(r.result);
+      if(!obj||!Array.isArray(obj.items)) throw new Error('形式が違います');
+      if(!confirm('読み込むと、いまのデータは置き換わります。よろしいですか？')) return;
+      state=migrate(obj); syncPreset(state); save();
+      notice='データを読み込みました。'; render(); window.scrollTo(0,0);
+    }catch(err){ alert('読み込めませんでした：'+err.message); }
+    finally{ ev.target.value=''; }
+  };
+  r.readAsText(f);
 });
 
 load();
