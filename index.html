@@ -121,6 +121,18 @@ main{max-width:640px;margin:0 auto;padding:0 12px}
 .period button{flex:1;height:44px;font-size:13px;font-weight:800;letter-spacing:.06em;border-left:2px solid var(--ink);color:var(--dim);background:var(--card)}
 .period button:first-child{border-left:none}
 .period button[aria-selected="true"]{background:var(--ink);color:#fff}
+.pnav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:-4px 0 18px}
+.pnav button{width:48px;height:44px;flex:none;border:2px solid var(--ink);border-radius:3px;background:var(--card);font-size:15px;font-weight:800;line-height:1}
+.pnav button:disabled{opacity:.22;cursor:default}
+.pnav b{flex:1;text-align:center;font-size:17px;font-weight:800;letter-spacing:.06em;font-variant-numeric:tabular-nums}
+.ychart{background:var(--card);border-radius:3px;padding:16px 12px}
+.ybars{display:flex;align-items:flex-end;gap:4px;height:104px}
+.ybar{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;padding:0}
+.ybar i{display:block;width:100%;background:var(--ink);border-radius:2px 2px 0 0;font-style:normal}
+.ybar.cur i{background:var(--red)}
+.ybar.sel i{background:var(--green)}
+.ylabels{display:flex;gap:4px;margin-top:7px}
+.ylabels span{flex:1;text-align:center;font-family:"Archivo",sans-serif;font-size:10px;font-weight:700;color:var(--dim)}
 .total{background:var(--ink);color:#fff;border-radius:3px;padding:20px}
 .total p{margin:0 0 12px;font-size:11px;font-weight:800;letter-spacing:.2em;color:rgba(255,255,255,.55)}
 .total b{font-family:"Archivo",sans-serif;font-size:38px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;display:block}
@@ -344,7 +356,8 @@ const PRESET=[
 const PRICE_BY_NAME={}; PRESET.forEach(p=>PRICE_BY_NAME[p[2]]=p[6]);
 
 const FREQ_LABEL={week:'週次',month:'月次',year:'年次'};
-let state=null, tab='week', period='month', histLimit=20;
+let state=null, tab='week', histLimit=20;
+let pMode='month', pYear=new Date().getFullYear(), pMonth=new Date().getMonth()+1;
 let editingId=null, editingLogId=null, saveTimer=null, lastBuy={};
 
 /* ---------- 日付 ---------- */
@@ -432,12 +445,40 @@ function buildLastBuy(){
     if(!lastBuy[l.itemId] || l.date>lastBuy[l.itemId].date) lastBuy[l.itemId]=l;
   });
 }
+const mm=n=>String(n).padStart(2,'0');
+function periodKey(){
+  return pMode==='month' ? `${pYear}-${mm(pMonth)}` : pMode==='year' ? `${pYear}-` : '';
+}
 function periodLog(){
-  const now=new Date(), y=now.getFullYear(), m=now.getMonth()+1;
-  const ym=y+'-'+String(m).padStart(2,'0');
-  if(period==='month') return state.log.filter(l=>l.date.startsWith(ym));
-  if(period==='year')  return state.log.filter(l=>l.date.startsWith(y+'-'));
-  return state.log.slice();
+  const k=periodKey();
+  return k ? state.log.filter(l=>l.date.startsWith(k)) : state.log.slice();
+}
+const periodLabel=()=>
+  pMode==='month' ? `${pYear}年${pMonth}月` : pMode==='year' ? `${pYear}年` : '全期間';
+const totalOf=key=>
+  state.log.filter(l=>l.date.startsWith(key)).reduce((s,l)=>s+(l.price||0)*(l.qty||1),0);
+
+function shiftPeriod(d){
+  if(pMode==='month'){
+    pMonth+=d;
+    if(pMonth>12){pMonth=1;pYear++;}
+    if(pMonth<1){pMonth=12;pYear--;}
+  }else if(pMode==='year'){ pYear+=d; }
+}
+function clampPeriod(){
+  const n=new Date(), cy=n.getFullYear(), cm=n.getMonth()+1;
+  if(pYear>cy){ pYear=cy; pMonth=cm; }
+  else if(pMode==='month' && pYear===cy && pMonth>cm) pMonth=cm;
+}
+function atLatest(){
+  const n=new Date(), cy=n.getFullYear(), cm=n.getMonth()+1;
+  if(pMode==='month') return pYear>cy || (pYear===cy && pMonth>=cm);
+  if(pMode==='year')  return pYear>=cy;
+  return true;
+}
+function hasEarlier(){
+  const bound = pMode==='month' ? `${pYear}-${mm(pMonth)}` : `${pYear}`;
+  return state.log.some(l=>l.date<bound);
 }
 
 /* ---------- render ---------- */
@@ -534,22 +575,43 @@ function viewBuy(){
 function viewRec(){
   const logs=periodLog();
   const total=logs.reduce((s,l)=>s+(l.price||0)*(l.qty||1),0);
-  const label={month:'今月',year:'今年',all:'全期間'}[period];
   const missing=logs.filter(l=>!l.price).length;
 
-  let html=`<div class="period" id="periodCtl">
-    ${['month','year','all'].map(p=>`<button data-p="${p}" aria-selected="${period===p}">${
-      {month:'今月',year:'今年',all:'全期間'}[p]}</button>`).join('')}
+  let html=`<div class="period">
+    ${[['month','月別'],['year','年別'],['all','全期間']].map(([p,t])=>
+      `<button data-p="${p}" aria-selected="${pMode===p}">${t}</button>`).join('')}
   </div>`;
+
+  if(pMode!=='all'){
+    html+=`<div class="pnav">
+      <button data-nav="-1"${hasEarlier()?'':' disabled'} aria-label="前の期間">◀</button>
+      <b>${periodLabel()}</b>
+      <button data-nav="1"${atLatest()?' disabled':''} aria-label="次の期間">▶</button>
+    </div>`;
+  }
+
+  let sub=`${logs.length}件の購入${missing?`　・　価格未入力 ${missing}件`:''}`;
+  if(pMode!=='all'){
+    const pk = pMode==='month'
+      ? (pMonth===1 ? `${pYear-1}-12` : `${pYear}-${mm(pMonth-1)}`)
+      : `${pYear-1}-`;
+    const prev=totalOf(pk);
+    if(prev){
+      const d=total-prev;
+      sub+=`<br>${pMode==='month'?'前月':'前年'} ${yen(prev)}円　${d>=0?'＋':'−'}${yen(Math.abs(d))}円`;
+    }
+  }
 
   html+=`<div class="total">
-    <p>${label}の合計</p>
+    <p>${periodLabel()}の合計</p>
     <b>${yen(total)}<small>円</small></b>
-    <div class="sub">${logs.length}件の購入${missing?`　・　価格未入力 ${missing}件`:''}</div>
+    <div class="sub">${sub}</div>
   </div>`;
 
+  if(pMode==='year') html+=yearChart();
+
   if(!logs.length){
-    html+=`<div class="empty"><b>まだ記録がありません</b>
+    html+=`<div class="empty"><b>この期間の記録はありません</b>
       <span>買うものタブで「買った」を押すと<br>ここに積み上がります。</span></div>`;
     html+=`<button class="add-btn" id="btnLogNew">＋ 購入を手入力する</button>`;
     return html;
@@ -604,6 +666,21 @@ function viewRec(){
   return html;
 }
 
+function yearChart(){
+  const vals=[]; for(let m=1;m<=12;m++) vals.push(totalOf(`${pYear}-${mm(m)}`));
+  const max=Math.max(...vals,1);
+  const n=new Date(), isCur=pYear===n.getFullYear(), cm=n.getMonth()+1;
+  return `<section class="cat"><div class="cat-head">月別の推移</div>
+    <div class="ychart">
+      <div class="ybars">${vals.map((v,i)=>`
+        <button class="ybar${isCur&&i+1===cm?' cur':''}" data-jump="${i+1}"
+          aria-label="${i+1}月 ${yen(v)}円">
+          <i style="height:${v?Math.max(3,v/max*100):0}%"></i>
+        </button>`).join('')}</div>
+      <div class="ylabels">${vals.map((v,i)=>`<span>${i+1}</span>`).join('')}</div>
+    </div></section>`;
+}
+
 function renderBar(){
   const n=buyList().length;
   const bar=document.getElementById('bar');
@@ -636,7 +713,13 @@ document.getElementById('main').addEventListener('click',e=>{
   if(nw){ openSheet(null,nw.dataset.new); return; }
 
   const pc=e.target.closest('[data-p]');
-  if(pc){ period=pc.dataset.p; histLimit=20; render(); return; }
+  if(pc){ pMode=pc.dataset.p; clampPeriod(); histLimit=20; render(); return; }
+
+  const nv=e.target.closest('[data-nav]');
+  if(nv){ if(nv.disabled) return; shiftPeriod(+nv.dataset.nav); histLimit=20; render(); return; }
+
+  const jp=e.target.closest('[data-jump]');
+  if(jp){ pMode='month'; pMonth=+jp.dataset.jump; clampPeriod(); histLimit=20; render(); window.scrollTo(0,0); return; }
 
   const lg=e.target.closest('[data-log]');
   if(lg){ openLogSheet(lg.dataset.log); return; }
