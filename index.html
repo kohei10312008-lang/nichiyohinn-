@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>日用品ストック</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#DFE2DD;
+  --card:#FFFFFF;
+  --ink:#12161A;
+  --dim:#68706C;
+  --line:#CDD2CD;
+  --red:#D62719;
+  --red-bg:#FDF1EF;
+  --amber:#D98214;
+  --green:#0F7A5A;
+  --tap:46px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP","Yu Gothic UI",sans-serif;
+  font-size:16px;line-height:1.5;padding-bottom:108px;-webkit-font-smoothing:antialiased;
+}
+button{font:inherit;color:inherit;cursor:pointer;border:none;background:none;padding:0}
+input,select{font:inherit;color:inherit}
+.mono{font-family:"Archivo",-apple-system,sans-serif;font-variant-numeric:tabular-nums}
+
+/* ============ header ============ */
+header{
+  position:sticky;top:0;z-index:40;background:var(--paper);
+  padding:calc(env(safe-area-inset-top) + 16px) 18px 0;box-shadow:0 1px 0 var(--line);
+}
+.brand{display:flex;align-items:flex-end;justify-content:space-between;gap:14px}
+h1{margin:0;font-size:15px;font-weight:800;letter-spacing:.28em;text-indent:.28em;line-height:1}
+.stamp{font-family:"Archivo",sans-serif;font-size:10.5px;font-weight:600;letter-spacing:.16em;color:var(--dim);white-space:nowrap;line-height:1}
+.tally{display:flex;gap:16px;margin:14px 0 0;align-items:baseline}
+.tally div{display:flex;align-items:baseline;gap:5px}
+.tally b{font-family:"Archivo",sans-serif;font-size:21px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.tally span{font-size:10.5px;font-weight:800;letter-spacing:.14em;color:var(--dim)}
+.t-red b{color:var(--red)} .t-amber b{color:var(--amber)} .t-green b{color:var(--green)}
+
+nav{display:flex;margin-top:14px}
+nav button{flex:1;padding:12px 2px 11px;font-size:13.5px;font-weight:800;letter-spacing:.1em;color:var(--dim);border-bottom:3px solid transparent}
+nav button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+nav .badge{
+  display:inline-block;min-width:19px;height:19px;padding:0 5px;margin-left:5px;
+  background:var(--red);color:#fff;border-radius:2px;font-family:"Archivo",sans-serif;
+  font-size:11.5px;font-weight:800;line-height:19px;letter-spacing:0;vertical-align:1px;
+}
+nav .badge:empty{display:none}
+
+/* ============ list ============ */
+main{max-width:640px;margin:0 auto;padding:0 12px}
+.cat{margin-bottom:26px}
+.cat:first-child{margin-top:18px}
+.cat-head{
+  position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;
+  padding:14px 6px 9px;background:var(--paper);
+  font-size:11px;font-weight:800;letter-spacing:.2em;color:var(--dim);
+}
+.cat-head::after{content:"";flex:1;height:2px;background:var(--line)}
+.rows{background:var(--card);border-radius:3px;overflow:hidden}
+
+.row{display:flex;align-items:center;gap:12px;position:relative;min-height:74px;padding:12px 12px 12px 20px;border-top:1px solid var(--line)}
+.row:first-child{border-top:none}
+.row::before{content:"";position:absolute;left:0;top:0;bottom:0;width:7px;background:transparent}
+.row.is-buy{background:var(--red-bg)}
+.row.is-buy::before{background:var(--red)}
+.row.is-low::before{background:var(--amber)}
+
+.name-btn{flex:1;min-width:0;text-align:left;padding:8px 0;min-height:var(--tap)}
+.name{display:block;font-size:17px;font-weight:800;letter-spacing:.01em;line-height:1.35;overflow-wrap:anywhere}
+.tag-buy{display:inline-block;margin-right:7px;padding:2px 6px;border-radius:2px;background:var(--red);color:#fff;font-size:11px;font-weight:800;letter-spacing:.1em;vertical-align:2px}
+.meta{display:block;margin-top:5px;font-size:13px;color:var(--dim);line-height:1.5;overflow-wrap:anywhere}
+.unit{display:inline-block;margin-right:6px;padding:1px 5px;border:1.5px solid var(--line);border-radius:2px;font-size:11px;font-weight:800;letter-spacing:.06em;color:var(--dim)}
+
+/* the three-band shelf tag */
+.seg{display:flex;flex:none;border:2px solid var(--ink);border-radius:3px;overflow:hidden;background:var(--card)}
+.seg button{
+  min-width:46px;height:48px;padding:0 5px;border-left:2px solid var(--ink);
+  font-family:"Archivo",sans-serif;font-size:13px;font-weight:800;letter-spacing:-.01em;
+  color:var(--dim);background:var(--card);transition:background .1s,color .1s;white-space:nowrap;
+}
+.seg button:first-child{border-left:none}
+.seg button.wide{font-size:11.5px}
+.seg button[aria-pressed="true"]{color:#fff}
+.seg .s0[aria-pressed="true"]{background:var(--red)}
+.seg .s1[aria-pressed="true"]{background:var(--amber)}
+.seg .s2[aria-pressed="true"]{background:var(--green)}
+
+.add-btn{width:100%;padding:17px;margin-top:10px;border:2px dashed var(--line);border-radius:3px;font-size:13.5px;font-weight:800;letter-spacing:.1em;color:var(--dim)}
+.add-btn:hover{border-color:var(--dim);color:var(--ink)}
+
+/* ============ buy tab ============ */
+.tags{display:flex;flex-direction:column;gap:10px}
+.tag{position:relative;display:flex;align-items:center;gap:14px;padding:16px 16px 16px 40px;background:var(--card);border:2px solid var(--ink);border-radius:3px}
+.tag::before{content:"";position:absolute;left:15px;top:50%;transform:translateY(-50%);width:11px;height:11px;border-radius:50%;border:2px solid var(--ink);background:var(--paper)}
+.tag-info{flex:1;min-width:0}
+.tag-cat{font-size:10.5px;font-weight:800;letter-spacing:.16em;color:var(--dim);margin-bottom:3px}
+.done{flex:none;padding:0 18px;height:44px;border-radius:3px;background:var(--ink);color:#fff;font-size:13.5px;font-weight:800;letter-spacing:.08em}
+.empty{text-align:center;padding:72px 24px 40px}
+.empty b{display:block;font-size:19px;font-weight:800;letter-spacing:.06em;margin-bottom:9px}
+.empty span{font-size:14px;color:var(--dim);line-height:1.7}
+.stamp-btn{display:block;width:100%;max-width:300px;margin:26px auto 0;padding:16px;border:2px solid var(--ink);border-radius:3px;background:transparent;font-size:13.5px;font-weight:800;letter-spacing:.1em}
+.stamp-btn:disabled{border-color:var(--line);color:var(--dim);cursor:default}
+
+/* ============ bottom bar ============ */
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:50;padding:12px;padding-bottom:calc(env(safe-area-inset-bottom) + 12px);background:linear-gradient(to top,var(--paper) 62%,rgba(223,226,221,0))}
+.bar button{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:616px;margin:0 auto;padding:16px 22px;border-radius:3px;background:var(--ink);color:#fff}
+.bar.none button{background:var(--green)}
+.bar .label{font-size:13.5px;font-weight:800;letter-spacing:.1em}
+.bar .count{font-family:"Archivo",sans-serif;font-size:27px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.bar .count small{font-size:13px;font-weight:800;margin-left:3px;letter-spacing:.06em}
+
+/* ============ sheet ============ */
+.backdrop{position:fixed;inset:0;z-index:60;background:rgba(18,22,26,.5);opacity:0;pointer-events:none;transition:opacity .2s}
+.backdrop.open{opacity:1;pointer-events:auto}
+.sheet{
+  position:fixed;left:0;right:0;bottom:0;z-index:70;max-width:640px;margin:0 auto;max-height:90vh;overflow-y:auto;
+  background:var(--card);border-radius:6px 6px 0 0;padding:22px 20px calc(env(safe-area-inset-bottom) + 22px);
+  transform:translateY(102%);transition:transform .26s cubic-bezier(.32,.72,0,1);
+}
+.sheet.open{transform:translateY(0)}
+.sheet h2{margin:0 0 20px;font-size:13px;font-weight:800;letter-spacing:.2em}
+.field{margin-bottom:17px}
+.field label{display:block;font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--dim);margin-bottom:7px}
+.field input{width:100%;padding:13px 14px;border:2px solid var(--line);border-radius:3px;background:#F7F8F6;font-size:16px;font-weight:600}
+.field select{width:100%;padding:13px 14px;border:2px solid var(--line);border-radius:3px;background:#F7F8F6;font-size:16px;font-weight:600}
+.field input:focus,.field select:focus{outline:none;border-color:var(--ink);background:#fff}
+.hint{font-size:12.5px;color:var(--dim);margin:7px 0 0;line-height:1.55}
+.pair{display:flex;gap:10px}
+.pair .field{flex:1;margin-bottom:0}
+/* live preview of the three bands */
+.preview{margin:14px 0 0;padding:13px 14px;background:#F7F8F6;border-radius:3px}
+.preview p{margin:0 0 9px;font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--dim)}
+.pv-rows{display:flex;flex-direction:column;gap:6px}
+.pv{display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:700}
+.pv i{width:11px;height:11px;border-radius:2px;flex:none;font-style:normal}
+.pv .p0{background:var(--red)} .pv .p1{background:var(--amber)} .pv .p2{background:var(--green)}
+.pv em{font-style:normal;color:var(--dim);font-weight:600;font-size:12.5px}
+.sheet-actions{display:flex;gap:10px;margin-top:24px}
+.sheet-actions button{flex:1;padding:16px;border-radius:3px;font-size:14px;font-weight:800;letter-spacing:.08em}
+.btn-save{background:var(--ink);color:#fff}
+.btn-cancel{background:#EDEFEC;color:var(--dim)}
+.btn-del{width:100%;margin-top:12px;padding:14px;color:var(--red);font-size:13px;font-weight:800;letter-spacing:.06em}
+
+:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (max-width:360px){.seg button{min-width:42px;font-size:12px}.name{font-size:16px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <h1>日用品ストック</h1>
+    <div class="stamp" id="stamp"></div>
+  </div>
+  <div class="tally" id="tally"></div>
+  <nav id="nav">
+    <button data-tab="week" aria-selected="true">週次<span class="badge" data-b="week"></span></button>
+    <button data-tab="month" aria-selected="false">月次<span class="badge" data-b="month"></span></button>
+    <button data-tab="year" aria-selected="false">年次<span class="badge" data-b="year"></span></button>
+    <button data-tab="buy" aria-selected="false">買うもの</button>
+  </nav>
+</header>
+
+<main id="main"></main>
+
+<div class="bar" id="bar"><button id="barBtn"></button></div>
+
+<div class="backdrop" id="backdrop"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <h2 id="sheetTitle">品目の設定</h2>
+  <div class="field">
+    <label for="f-name">品名</label>
+    <input id="f-name" type="text" placeholder="例：食器用洗剤">
+  </div>
+  <div class="field">
+    <label for="f-memo">メモ（銘柄・容量・購入先）</label>
+    <input id="f-memo" type="text" placeholder="例：キュキュット 240ml／西友">
+  </div>
+  <div class="field">
+    <label for="f-unit">数える単位</label>
+    <input id="f-unit" type="text" placeholder="例：本・ロール・枚（空欄なら「予備の数」）">
+  </div>
+  <div class="pair">
+    <div class="field">
+      <label for="f-red">買う（赤）</label>
+      <input id="f-red" type="number" min="0" max="999" inputmode="numeric">
+      <p class="hint">この数以下</p>
+    </div>
+    <div class="field">
+      <label for="f-amber">そろそろ（黄）</label>
+      <input id="f-amber" type="number" min="1" max="999" inputmode="numeric">
+      <p class="hint">この数以下</p>
+    </div>
+  </div>
+  <div class="preview">
+    <p>ボタンの表示</p>
+    <div class="pv-rows" id="preview"></div>
+  </div>
+  <div class="field" style="margin-top:17px">
+    <label for="f-freq">確認頻度</label>
+    <select id="f-freq">
+      <option value="week">週次</option>
+      <option value="month">月次</option>
+      <option value="year">年次</option>
+    </select>
+  </div>
+  <div class="field">
+    <label for="f-cat">カテゴリ</label>
+    <input id="f-cat" type="text" list="catlist" placeholder="例：キッチン">
+    <datalist id="catlist"></datalist>
+  </div>
+  <div class="sheet-actions">
+    <button class="btn-cancel" id="btnCancel">やめる</button>
+    <button class="btn-save" id="btnSave">保存する</button>
+  </div>
+  <button class="btn-del" id="btnDel">この品目を削除する</button>
+</div>
+
+<script>
+const KEY='stock:v1';
+
+/* [頻度, カテゴリ, 品名, 赤ライン, 黄ライン, 単位] */
+const PRESET=[
+ ['week','キッチン','ラップ',0,1,''],['week','キッチン','ジップ袋',0,1,''],
+ ['week','キッチン','キッチンペーパー',1,3,'ロール'],
+ ['week','キッチン','食器用洗剤',0,1,''],['week','キッチン','スポンジ',0,2,'個'],
+ ['week','キッチン','排水口ネット',5,15,'枚'],['week','キッチン','ゴミ袋（指定袋）',5,15,'枚'],
+ ['week','紙・衛生','トイレットペーパー',4,8,'ロール'],['week','紙・衛生','ティッシュ',1,3,'箱'],
+ ['week','紙・衛生','ウェットティッシュ',0,1,''],
+ ['week','洗濯','洗濯洗剤',0,1,''],['week','洗濯','柔軟剤',0,1,''],
+ ['month','キッチン','アルミホイル',0,1,''],['month','キッチン','クッキングシート',0,1,''],
+ ['month','キッチン','キッチン泡ハイター',0,1,''],
+ ['month','洗面・風呂','シャンプー',0,1,''],['month','洗面・風呂','コンディショナー',0,1,''],
+ ['month','洗面・風呂','ボディソープ',0,1,''],['month','洗面・風呂','洗顔料',0,1,''],
+ ['month','洗面・風呂','歯磨き粉',0,1,''],['month','洗面・風呂','歯ブラシ',2,4,'本'],
+ ['month','洗面・風呂','デンタルフロス',0,1,''],['month','洗面・風呂','髭剃り替刃',1,3,'個'],
+ ['month','洗面・風呂','風呂用洗剤',0,1,''],['month','洗面・風呂','入浴剤',0,1,''],
+ ['month','トイレ','トイレ洗剤',0,1,''],['month','トイレ','流せるクリーナー',0,1,''],['month','トイレ','消臭剤',0,1,''],
+ ['month','洗濯','漂白剤',0,1,''],['month','洗濯','洗濯槽クリーナー',0,1,''],['month','洗濯','洗濯ネット',0,1,''],
+ ['month','掃除','フロアワイパーシート',5,15,'枚'],['month','掃除','掃除機の紙パック／フィルター',1,3,'個'],
+ ['month','掃除','除菌シート',0,1,''],['month','掃除','ゴム手袋',0,1,''],['month','掃除','重曹・クエン酸',0,1,''],
+ ['month','薬・救急','解熱鎮痛薬',0,1,''],['month','薬・救急','風邪薬',0,1,''],['month','薬・救急','胃腸薬',0,1,''],
+ ['month','薬・救急','消毒液',0,1,''],['month','薬・救急','絆創膏',5,15,'枚'],['month','薬・救急','湿布',5,15,'枚'],
+ ['year','設備','乾電池（単3）',2,6,'本'],['year','設備','乾電池（単4）',2,6,'本'],
+ ['year','設備','電球・LED',0,1,''],['year','設備','火災警報器（電池／本体10年）',0,1,''],
+ ['year','設備','換気扇フィルター',1,3,'枚'],['year','設備','エアコンフィルター',0,1,''],
+ ['year','設備','浄水器カートリッジ',0,1,''],['year','設備','ライター・チャッカマン',0,1,''],
+ ['year','季節','虫除け・殺虫剤',0,1,''],['year','季節','カイロ',5,15,'個'],
+ ['year','季節','除湿剤',1,3,'個'],['year','季節','加湿器フィルター',0,1,''],
+ ['year','季節','日焼け止め',0,1,''],['year','季節','衣類用防虫剤',0,1,''],
+ ['year','備蓄','飲料水（2L）',6,12,'本'],['year','備蓄','レトルト・非常食',6,12,'食'],
+ ['year','備蓄','カセットボンベ',3,6,'本'],
+];
+
+const FREQ_LABEL={week:'週次',month:'月次',year:'年次'};
+let state=null, tab='week', editingId=null, saveTimer=null;
+
+function seed(){
+  return {
+    items:PRESET.map((p,i)=>({id:'i'+i,freq:p[0],cat:p[1],name:p[2],red:p[3],amber:p[4],unit:p[5],memo:'',band:2})),
+    seq:PRESET.length, lastCheck:null
+  };
+}
+function migrate(s){
+  s.items.forEach(it=>{
+    if(it.red===undefined){
+      const bl=it.buyLine||0;
+      it.red=bl; it.amber=bl+1; it.unit=it.unit||'';
+      delete it.buyLine;
+    }
+    if(it.band===undefined){ it.band = it.count!==undefined ? it.count : 2; delete it.count; }
+    if(it.amber<=it.red) it.amber=it.red+1;
+  });
+  return s;
+}
+async function load(){
+  try{
+    const r=await window.storage.get(KEY);
+    state=r&&r.value?migrate(JSON.parse(r.value)):seed();
+  }catch(e){ state=seed(); }
+  render();
+}
+function save(){
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(async()=>{
+    try{ await window.storage.set(KEY,JSON.stringify(state)); }
+    catch(e){ console.error('保存できませんでした',e); }
+  },250);
+}
+
+const status=it=> it.band===0 ? 'buy' : (it.band===1 ? 'low' : 'ok');
+const buyList=()=>state.items.filter(it=>status(it)==='buy');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const isSimple=it=>!it.unit && it.red===0 && it.amber===1;
+
+function bandLabels(it){
+  if(isSimple(it)) return ['0','1','2+'];
+  const a=`${it.red}以下`;
+  const b=(it.amber===it.red+1) ? `${it.amber}` : `${it.red+1}-${it.amber}`;
+  const c=`${it.amber+1}+`;
+  return [a,b,c];
+}
+function bandWords(it){
+  const l=bandLabels(it), u=it.unit||'';
+  return isSimple(it)
+    ? ['予備なし','予備1つ','予備2つ以上']
+    : [l[0]+u, l[1]+u, l[2].replace('+','')+u+'以上'];
+}
+
+function render(){
+  renderHeader();
+  document.getElementById('main').innerHTML = tab==='buy' ? viewBuy() : viewList(tab);
+  renderBar();
+  document.getElementById('catlist').innerHTML=
+    [...new Set(state.items.map(i=>i.cat))].map(c=>`<option value="${esc(c)}">`).join('');
+}
+
+function renderHeader(){
+  const c={buy:0,low:0,ok:0};
+  state.items.forEach(it=>c[status(it)]++);
+  document.getElementById('tally').innerHTML=`
+    <div class="t-red"><b>${c.buy}</b><span>買う</span></div>
+    <div class="t-amber"><b>${c.low}</b><span>のこり少</span></div>
+    <div class="t-green"><b>${c.ok}</b><span>ある</span></div>`;
+  document.getElementById('stamp').textContent =
+    state.lastCheck ? 'CHECKED '+state.lastCheck : 'NOT CHECKED';
+  ['week','month','year'].forEach(f=>{
+    const k=state.items.filter(it=>it.freq===f&&status(it)==='buy').length;
+    document.querySelector(`.badge[data-b="${f}"]`).textContent=k||'';
+  });
+  document.querySelectorAll('#nav button').forEach(b=>
+    b.setAttribute('aria-selected', b.dataset.tab===tab));
+}
+
+function viewList(freq){
+  const items=state.items.filter(it=>it.freq===freq);
+  const cats=[...new Set(items.map(i=>i.cat))];
+  return cats.map(cat=>`
+    <section class="cat">
+      <div class="cat-head">${esc(cat)}</div>
+      <div class="rows">${items.filter(i=>i.cat===cat).map(rowHTML).join('')}</div>
+    </section>`).join('')
+    + `<button class="add-btn" data-new="${freq}">＋ ${FREQ_LABEL[freq]}に品目を追加</button>`;
+}
+
+function rowHTML(it){
+  const st=status(it), labels=bandLabels(it), words=bandWords(it);
+  const wide=labels.some(l=>l.length>3);
+  const metaBits=[];
+  if(it.unit) metaBits.push(`<span class="unit">${esc(it.unit)}</span>`);
+  if(it.memo) metaBits.push(esc(it.memo));
+  return `<div class="row ${st==='buy'?'is-buy':st==='low'?'is-low':''}">
+    <button class="name-btn" data-edit="${it.id}">
+      <span class="name">${st==='buy'?'<span class="tag-buy">買う</span>':''}${esc(it.name)}</span>
+      ${metaBits.length?`<span class="meta">${metaBits.join('')}</span>`:''}
+    </button>
+    <div class="seg" role="group" aria-label="${esc(it.name)}の在庫">
+      ${[0,1,2].map(v=>`<button class="s${v}${wide?' wide':''}" data-set="${it.id}" data-v="${v}"
+        aria-pressed="${it.band===v}" aria-label="${esc(words[v])}">${esc(labels[v])}</button>`).join('')}
+    </div>
+  </div>`;
+}
+
+function viewBuy(){
+  const list=buyList();
+  if(!list.length) return `<div class="empty">
+      <b>買うものはありません</b>
+      <span>赤の帯に入った品目が<br>ここに集まります。</span>
+      <button class="stamp-btn" id="btnStamp">今日チェックした</button>
+    </div>`;
+  return `<section class="cat">
+      <div class="cat-head">買うもの ${list.length}点</div>
+      <div class="tags">
+        ${list.map(it=>{
+          const bits=[];
+          if(!isSimple(it)) bits.push(`${it.red}${it.unit||''}以下`);
+          if(it.memo) bits.push(esc(it.memo));
+          return `<div class="tag">
+            <div class="tag-info">
+              <div class="tag-cat">${esc(it.cat)}</div>
+              <div class="name">${esc(it.name)}</div>
+              ${bits.length?`<div class="meta">${bits.join('　')}</div>`:''}
+            </div>
+            <button class="done" data-bought="${it.id}">買った</button>
+          </div>`;
+        }).join('')}
+      </div>
+      <button class="stamp-btn" id="btnStamp">今日チェックした</button>
+    </section>`;
+}
+
+function renderBar(){
+  const n=buyList().length;
+  const bar=document.getElementById('bar');
+  bar.classList.toggle('none',n===0);
+  document.getElementById('barBtn').innerHTML = n
+    ? `<span class="label">買うもの</span><span class="count">${n}<small>点</small></span>`
+    : `<span class="label">在庫は足りています</span><span class="count">✓</span>`;
+}
+
+/* ---------- events ---------- */
+document.getElementById('nav').addEventListener('click',e=>{
+  const b=e.target.closest('button[data-tab]'); if(!b) return;
+  tab=b.dataset.tab; render(); window.scrollTo(0,0);
+});
+document.getElementById('barBtn').addEventListener('click',()=>{ tab='buy'; render(); window.scrollTo(0,0); });
+
+document.getElementById('main').addEventListener('click',e=>{
+  const set=e.target.closest('[data-set]');
+  if(set){ const it=state.items.find(i=>i.id===set.dataset.set);
+    it.band=+set.dataset.v; save(); render(); return; }
+  const bought=e.target.closest('[data-bought]');
+  if(bought){ const it=state.items.find(i=>i.id===bought.dataset.bought);
+    it.band=2; save(); render(); return; }
+  const ed=e.target.closest('[data-edit]');
+  if(ed){ openSheet(ed.dataset.edit); return; }
+  const nw=e.target.closest('[data-new]');
+  if(nw){ openSheet(null,nw.dataset.new); return; }
+  if(e.target.id==='btnStamp'){
+    state.lastCheck=new Date().toLocaleDateString('ja-JP',{month:'numeric',day:'numeric'});
+    save(); renderHeader();
+    e.target.textContent='チェック済み'; e.target.disabled=true;
+  }
+});
+
+/* ---------- sheet ---------- */
+const sheet=document.getElementById('sheet'), backdrop=document.getElementById('backdrop');
+const $=id=>document.getElementById(id);
+
+function readForm(){
+  let red=parseInt($('f-red').value,10); if(isNaN(red)||red<0) red=0;
+  let amber=parseInt($('f-amber').value,10); if(isNaN(amber)) amber=red+1;
+  if(amber<=red) amber=red+1;
+  return {red,amber,unit:$('f-unit').value.trim()};
+}
+function drawPreview(){
+  const f=readForm();
+  const fake={red:f.red,amber:f.amber,unit:f.unit};
+  const w=bandWords(fake);
+  $('preview').innerHTML=[0,1,2].map(i=>
+    `<div class="pv"><i class="p${i}"></i>${esc(w[i])} <em>${['→ 買う','→ そろそろ','→ ある'][i]}</em></div>`
+  ).join('');
+}
+['f-red','f-amber','f-unit'].forEach(id=>$(id).addEventListener('input',drawPreview));
+
+function openSheet(id,freq){
+  editingId=id;
+  const it=id?state.items.find(i=>i.id===id):null;
+  $('sheetTitle').textContent=it?'品目の設定':'品目を追加';
+  $('f-name').value=it?it.name:'';
+  $('f-memo').value=it?it.memo:'';
+  $('f-unit').value=it?it.unit:'';
+  $('f-red').value=it?it.red:0;
+  $('f-amber').value=it?it.amber:1;
+  $('f-freq').value=it?it.freq:(freq||'week');
+  $('f-cat').value=it?it.cat:'';
+  $('btnDel').style.display=it?'block':'none';
+  drawPreview();
+  sheet.classList.add('open'); backdrop.classList.add('open');
+  sheet.scrollTop=0;
+  if(!it) setTimeout(()=>$('f-name').focus(),280);
+}
+function closeSheet(){ sheet.classList.remove('open'); backdrop.classList.remove('open'); editingId=null; }
+backdrop.addEventListener('click',closeSheet);
+$('btnCancel').addEventListener('click',closeSheet);
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&sheet.classList.contains('open')) closeSheet(); });
+
+$('btnSave').addEventListener('click',()=>{
+  const name=$('f-name').value.trim();
+  if(!name){ $('f-name').focus(); return; }
+  const f=readForm();
+  const data={
+    name, memo:$('f-memo').value.trim(),
+    unit:f.unit, red:f.red, amber:f.amber,
+    freq:$('f-freq').value,
+    cat:$('f-cat').value.trim()||'その他'
+  };
+  if(editingId) Object.assign(state.items.find(i=>i.id===editingId),data);
+  else{ state.items.push({id:'n'+(state.seq++),band:2,...data}); tab=data.freq; }
+  save(); closeSheet(); render();
+});
+$('btnDel').addEventListener('click',()=>{
+  const it=state.items.find(i=>i.id===editingId);
+  if(!confirm(`「${it.name}」を削除しますか？`)) return;
+  state.items=state.items.filter(i=>i.id!==editingId);
+  save(); closeSheet(); render();
+});
+
+load();
+</script>
+</body>
+</html>
