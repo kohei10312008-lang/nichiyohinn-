@@ -133,6 +133,11 @@ main{max-width:640px;margin:0 auto;padding:0 12px}
 .ybar.sel i{background:var(--green)}
 .ylabels{display:flex;gap:4px;margin-top:7px}
 .ylabels span{flex:1;text-align:center;font-family:"Archivo",sans-serif;font-size:10px;font-weight:700;color:var(--dim)}
+.notice{display:flex;align-items:flex-start;gap:10px;margin:18px 0 -8px;padding:13px 14px;background:var(--ink);color:#fff;border-radius:3px;font-size:13px;font-weight:700;line-height:1.55}
+.notice span{flex:1}
+.notice button{flex:none;width:28px;height:28px;color:rgba(255,255,255,.65);font-size:17px;font-weight:800;line-height:1}
+.reset-btn{width:100%;margin-top:28px;padding:15px;border:2px solid var(--line);border-radius:3px;font-size:12.5px;font-weight:800;letter-spacing:.06em;color:var(--dim)}
+.reset-btn:hover{border-color:var(--red);color:var(--red)}
 .total{background:var(--ink);color:#fff;border-radius:3px;padding:20px}
 .total p{margin:0 0 12px;font-size:11px;font-weight:800;letter-spacing:.2em;color:rgba(255,255,255,.55)}
 .total b{font-family:"Archivo",sans-serif;font-size:38px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;display:block}
@@ -375,11 +380,39 @@ function daysAgo(s){
 const yen=n=>n.toLocaleString('ja-JP');
 
 /* ---------- 保存 ---------- */
+/* ---------- PRESET の差分取り込み ---------- */
+const P_FIELDS=['freq','cat','red','amber','unit','price'];
+const presetObj=p=>({freq:p[0],cat:p[1],name:p[2],red:p[3],amber:p[4],unit:p[5],price:p[6]});
+const snapshot=o=>{const s={};P_FIELDS.forEach(f=>s[f]=o[f]);return s;};
+
+function syncPreset(s){
+  if(!s.seen) s.seen={};
+  let added=0, updated=0;
+  PRESET.forEach(p=>{
+    const po=presetObj(p);
+    const prev=s.seen[po.name];
+    const item=s.items.find(i=>i.name===po.name);
+    if(!item){
+      /* 一度も取り込んでいない名前だけ追加する（アプリ内で消したものは復活させない） */
+      if(!prev){ s.items.push({id:'n'+(s.seq++),memo:'',band:2,...po}); added++; }
+    }else if(prev){
+      /* HTML側が変わっていて、かつアプリ内で触っていない項目だけ更新 */
+      let touched=false;
+      P_FIELDS.forEach(f=>{ if(prev[f]!==po[f] && item[f]===prev[f]){ item[f]=po[f]; touched=true; } });
+      if(touched) updated++;
+    }
+    s.seen[po.name]=snapshot(po);
+  });
+  return {added,updated};
+}
+
 function seed(){
-  return {
-    items:PRESET.map((p,i)=>({id:'i'+i,freq:p[0],cat:p[1],name:p[2],red:p[3],amber:p[4],unit:p[5],price:p[6],memo:'',band:2})),
-    seq:PRESET.length, lastCheck:null, log:[], logSeq:0
+  const s={
+    items:PRESET.map((p,i)=>({id:'i'+i,memo:'',band:2,...presetObj(p)})),
+    seq:PRESET.length, lastCheck:null, log:[], logSeq:0, seen:{}
   };
+  PRESET.forEach(p=>{ s.seen[p[2]]=snapshot(presetObj(p)); });
+  return s;
 }
 function migrate(s){
   s.items.forEach(it=>{
@@ -396,10 +429,21 @@ function migrate(s){
   if(s.logSeq===undefined) s.logSeq=s.log.length;
   return s;
 }
+let notice='';
 async function load(){
   try{
     const r=await window.storage.get(KEY);
-    state=r&&r.value?migrate(JSON.parse(r.value)):seed();
+    if(r&&r.value){
+      state=migrate(JSON.parse(r.value));
+      const res=syncPreset(state);
+      if(res.added||res.updated){
+        const parts=[];
+        if(res.added) parts.push(`${res.added}品目を追加`);
+        if(res.updated) parts.push(`${res.updated}品目の設定を更新`);
+        notice='HTMLの変更を取り込みました：'+parts.join('、')+'。';
+        save();
+      }
+    }else state=seed();
   }catch(e){ state=seed(); }
   render();
 }
@@ -485,8 +529,10 @@ function hasEarlier(){
 function render(){
   buildLastBuy();
   renderHeader();
-  const main=document.getElementById('main');
-  main.innerHTML = tab==='buy' ? viewBuy() : tab==='rec' ? viewRec() : viewList(tab);
+  const body = tab==='buy' ? viewBuy() : tab==='rec' ? viewRec() : viewList(tab);
+  document.getElementById('main').innerHTML =
+    (notice?`<div class="notice"><span>${esc(notice)}</span><button id="btnNotice" aria-label="閉じる">×</button></div>`:'')
+    + body;
   renderBar();
   document.getElementById('catlist').innerHTML=
     [...new Set(state.items.map(i=>i.cat))].map(c=>`<option value="${esc(c)}">`).join('');
@@ -662,6 +708,7 @@ function viewRec(){
     </div>
     ${sorted.length>histLimit?`<button class="more-btn" id="btnMore">もっと見る（残り${sorted.length-histLimit}件）</button>`:''}
     <button class="add-btn" id="btnLogNew">＋ 購入を手入力する</button>
+    <button class="reset-btn" id="btnReset">HTMLの内容ですべて作り直す</button>
   </section>`;
   return html;
 }
@@ -724,6 +771,12 @@ document.getElementById('main').addEventListener('click',e=>{
   const lg=e.target.closest('[data-log]');
   if(lg){ openLogSheet(lg.dataset.log); return; }
 
+  if(e.target.id==='btnNotice'){ notice=''; render(); return; }
+  if(e.target.id==='btnReset'){
+    if(!confirm('すべての在庫状態と購入記録を消して、HTMLの内容で作り直します。よろしいですか？')) return;
+    if(!confirm('この操作は取り消せません。本当に実行しますか？')) return;
+    state=seed(); notice='HTMLの内容で作り直しました。'; save(); render(); window.scrollTo(0,0); return;
+  }
   if(e.target.id==='btnMore'){ histLimit+=40; render(); return; }
   if(e.target.id==='btnLogNew'){ openLogSheet(null); return; }
 
